@@ -11,4 +11,7 @@ ultralytics>=8.0.0
 # pip install torch torchvision
 # 或: pip install torch==2.0.0 torchvision==0.15.0
 # 训练请参考 training/requirements_training.txt
+gunicorn==23.0.0
+torch==2.12.0
+torchvision==0.27.0
 
