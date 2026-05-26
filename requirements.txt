@@ -1,0 +1,14 @@
+Flask==3.0.0
+Flask-CORS==4.0.0
+requests==2.31.0
+python-dotenv==1.0.0
+SQLAlchemy==2.0.23
+Pillow>=10.0.0
+numpy>=1.24.0
+# YOLO 鸟类轮廓检测
+ultralytics>=8.0.0
+# PyTorch（如需本地模型推理，请根据CUDA版本安装）
+# pip install torch torchvision
+# 或: pip install torch==2.0.0 torchvision==0.15.0
+# 训练请参考 training/requirements_training.txt
+
