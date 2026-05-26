@@ -1299,57 +1299,40 @@ def api_health():
 #  主入口
 # ======================================================================
 
+# ---------- 初始化（无论以何种方式运行，都会执行） ----------
+init_db()
+
+logger.info("🔄 尝试加载本地模型...")
+model_loaded = load_local_model()
+if model_loaded:
+    logger.info("✅ 本地模型加载成功，将使用本地模型进行识别")
+else:
+    logger.warning("=" * 60)
+    logger.warning("⚠️  本地模型未加载（models/best_model.pth 不存在）")
+    logger.warning("  请在 training/ 目录下运行 train.py 训练模型")
+    logger.warning("=" * 60)
+
+if not DEEPSEEK_API_KEY:
+    logger.warning("=" * 60)
+    logger.warning("⚠️  DeepSeek API Key 未配置！")
+    logger.warning("  问答功能的知识库匹配仍可正常工作")
+    logger.warning("  申请地址: https://platform.deepseek.com/")
+    logger.warning("=" * 60)
+
+logger.info("🔄 尝试加载 YOLO 型号（鸟类轮廓检测）...")
+yolo_loaded = load_yolo_model()
+if yolo_loaded:
+    logger.info("✅ YOLO 模型加载成功，将进行鸟类轮廓检测")
+else:
+    logger.warning("⚠️  YOLO 模型未加载，将跳过目标检测（不影响分类）")
+
+logger.info("🚀 鸟类识别与问答系统后端已就绪")
+
 if __name__ == "__main__":
-    # 初始化数据库
-    init_db()
-
-    # 尝试加载本地模型（不阻塞启动）
-    logger.info("🔄 尝试加载本地模型...")
-    model_loaded = load_local_model()
-    if model_loaded:
-        logger.info("✅ 本地模型加载成功，将使用本地模型进行识别")
-    else:
-        logger.warning("=" * 60)
-        logger.warning("⚠️  本地模型未加载（models/best_model.pth 不存在）")
-        logger.warning("  请在 training/ 目录下运行 train.py 训练模型")
-
-        logger.warning("=" * 60)
-
-
-
-
-
-
-
-
-
-
-
-
-    if not DEEPSEEK_API_KEY:
-        logger.warning("=" * 60)
-        logger.warning("⚠️  DeepSeek API Key 未配置！")
-        logger.warning("  问答功能的知识库匹配仍可正常工作")
-        logger.warning("  申请地址: https://platform.deepseek.com/")
-        logger.warning("=" * 60)
-
-    # 尝试加载 YOLO 模型
-    logger.info("🔄 尝试加载 YOLO 型号（鸟类轮廓检测）...")
-    yolo_loaded = load_yolo_model()
-    if yolo_loaded:
-        logger.info("✅ YOLO 模型加载成功，将进行鸟类轮廓检测")
-    else:
-        logger.warning("⚠️  YOLO 模型未加载，将跳过目标检测（不影响分类）")
-
-    # 启动Flask服务
-    logger.info("🚀 启动鸟类识别与问答系统后端...")
     logger.info("📡 服务地址: http://localhost:5000")
     logger.info("📋 API文档:")
-
-
     logger.info("  POST /api/recognize  - 鸟类识别（YOLO轮廓检测 + ResNet50分类）")
     logger.info("  POST /api/ask       - 智能问答")
     logger.info("  GET  /api/history   - 历史记录")
     logger.info("  GET  /api/health    - 健康检查")
-
     app.run(host="0.0.0.0", port=5000, debug=True)
